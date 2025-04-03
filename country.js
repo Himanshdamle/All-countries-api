@@ -35,10 +35,8 @@ function createDetailInfo(countryData) {
       htmlStructure = borderCountryName
         .map(
           (countryName) => `
-                  <a href="/country.html?name=${countryName}">
-                    <li class="values font-size-mid input-type-style give-border border-radius">
-                      ${countryName}
-                    </li>
+                  <a class="values font-size-mid input-type-style give-border border-radius" href="/country.html?name=${countryName}">
+                    ${countryName}
                   </a>
                   `
         )
@@ -60,7 +58,7 @@ function createDetailInfo(countryData) {
   
       <section>
         <div class="flex flex-gap" id="micro-detail">
-          <div class="right-md md-items flex">
+          <div class="md-items flex">
             <p class="values-heading font-size-mid">
               Native Name:
               <span class="values">
@@ -133,9 +131,9 @@ function createDetailInfo(countryData) {
             Border Countries:&nbsp;&nbsp;&nbsp;&nbsp;
           </p>
           <div id="border-countries-list-wrapper">
-            <ul class="flex-gap">
+            <div class="flex flex-gap">
               ${htmlStructure}
-            </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -151,11 +149,35 @@ https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
     createDetailInfo(country[0]);
   })
   .catch((err) => {
-    section.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#EA3323"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+    section.innerHTML = `
+    <div id="error-message-box" class="flex">
+        <div class="flex">
+        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#EA3323"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
     
-    <h1 id="error-message" class="font-size-large">
+       <h1 id="error-message" class="font-size-large">
       Failed to fetch country details
-    </h1>`;
+    </h1>
+    </div>
+  
+          <button class="flex input-type-style border-radius give-border">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#000000"
+        >
+          <path
+            d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"
+          />
+        </svg>
+        <p id="reload-page-btn" class="font-size-mid">Try reloading this Web Page.</p>
+      </button>
+      </div>
+    `;
+    document.querySelector("#reload-page-btn").addEventListener("click", () => {
+      location.reload();
+    });
   });
 
 document.querySelector("#back-btn").addEventListener("click", () => {

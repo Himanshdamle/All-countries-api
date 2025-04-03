@@ -16,26 +16,57 @@
   --large-font-size: 2.5rem;
   --mid-font-size: 1.2vw;
   --small-font-size: 1.2rem;
+
+  --dark-mode-bg: hsl(207, 26%, 17%);
+  --dark-mode-txt-color: hsl(0, 0%, 100%);
+  --dark-mode-element-color: hsl(209, 23%, 22%);
 }
 
-body {
+body.light {
   background-color: var(--light-mode-bg);
   color: var(--light-mode-txt-color);
 }
 
+body.dark {
+  background-color: var(--dark-mode-bg) !important;
+  color: var(--dark-mode-txt-color);
+}
+
+svg.dark {
+  fill: var(--dark-mode-txt-color);
+}
+svg.light {
+  fill: var(--light-mode-txt-color);
+}
+
+.dark {
+  background-color: var(--dark-mode-element-color);
+}
+.country-cards {
+  background-color: inherit !important;
+}
+button {
+  background-color: transparent;
+}
+
 .flex,
-ul {
+ul,
+button {
   display: flex;
   align-items: center;
   justify-content: space-between;
   border: none;
-  background-color: transparent;
+  color: inherit;
 }
 .give-border {
   box-shadow: var(--ligth-mode-box-shadow);
 }
-.font-size-large {
+.font-size-large,
+.font-size-mid {
   font-family: "Nunito Sans", sans-serif;
+  color: inherit;
+}
+.font-size-large {
   font-weight: 800;
   font-size: clamp(
     calc(var(--small-font-size)),
@@ -44,7 +75,7 @@ ul {
   );
 }
 .font-size-mid {
-  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
   font-size: clamp(
     calc(var(--small-font-size) - 00.2rem),
     var(--mid-font-size),
@@ -59,21 +90,23 @@ button {
 }
 a {
   text-decoration: none;
-  color: var(--light-mode-txt-color);
+  color: inherit;
 }
 input,
-select {
+select,
+input::placeholder {
   border: none;
   outline: none;
-  background: transparent;
+  background: inherit;
   font-family: "Nunito Sans", sans-serif;
+  color: inherit;
 }
 ul li {
   list-style: none;
 }
 
 nav {
-  padding-inline: var(--inline-padding);
+  padding: var(--inline-padding);
   padding-top: 20px;
   padding-bottom: 20px;
 }
@@ -85,6 +118,11 @@ nav {
 main {
   padding-inline: var(--inline-padding);
   margin-top: 5vh;
+}
+
+#main-countryhtml {
+  width: fit-content;
+  margin-inline: auto;
 }
 
 .input-type-style {
@@ -114,12 +152,15 @@ select {
 
 #show-country-list {
   margin-top: 5vh;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-  gap: 2.5vw;
-  row-gap: 5vh;
   width: 100%;
   min-width: fit-content;
+  justify-content: space-between;
+}
+
+@media (max-width: 775px) {
+  #show-country-list {
+    justify-content: center;
+  }
 }
 
 .country-cards {
@@ -144,7 +185,7 @@ select {
   font-weight: 600;
 }
 .values {
-  color: #383838;
+  color: inherit;
   font-weight: 300;
 }
 
@@ -155,23 +196,23 @@ select {
   margin-top: 8vh;
 }
 #info-section {
-  justify-content: center;
-  align-items: start;
+  align-items: center;
+  justify-content: start;
+  gap: 100px;
   margin-bottom: var(--input-inline-padding);
 }
 #back-btn {
   gap: 10px;
 }
-#country-details-wrapper {
-  margin-left: calc(var(--inline-padding) * 2);
-}
 #micro-detail {
   margin-top: var(--input-inline-padding);
   margin-bottom: calc(var(--input-inline-padding) * 2);
   align-items: self-start;
+  flex-wrap: nowrap;
   gap: var(--input-inline-padding);
 }
-.md-items {
+.md-items,
+#error-message-box {
   flex-direction: column;
   align-items: start;
   gap: 10px;
@@ -186,32 +227,38 @@ select {
   flex-wrap: wrap;
   justify-content: start;
 }
-
+#error-message-box {
+  align-items: center;
+}
 #border-p-tag {
   white-space: nowrap;
+}
+
+a.dark {
+  background-color: var(--dark-mode-element-color);
+}
+a.light {
+  background-color: #fff;
 }
 
 #error-message {
   color: red;
 }
-
-@media (max-width: 1200px) {
-  #info-section {
-    flex-direction: column;
-    gap: 30px;
-    align-items: center;
-  }
-  #micro-detail {
-    margin-bottom: var(--input-inline-padding);
-  }
+#error-message-box {
+  margin: 0 auto;
 }
 
+@media (max-width: 1150px) {
+  #info-section {
+    flex-direction: column;
+  }
+  #micro-detail {
+    flex-wrap: wrap;
+  }
+}
 @media (max-width: 740px) {
   #show-country-list {
     justify-items: center;
-  }
-  #country-details-wrapper {
-    margin: 0;
   }
 }
 
@@ -226,19 +273,12 @@ select {
     flex-direction: column;
     align-items: start;
   }
+  .country-cards img,
+  .country-cards {
+    width: 85vw;
+  }
   #search-box {
     width: auto;
-  }
-  .country-cards img {
-    width: 230px;
-  }
-  .country-cards {
-    width: 230px;
-  }
-  #show-country-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 }
 
@@ -247,9 +287,14 @@ select {
   aspect-ratio: 1;
   border-radius: 50%;
   border: 8px solid #0000;
-  border-right-color: #ffa50097;
   position: relative;
   animation: l24 1s infinite linear;
+}
+.loader.dark {
+  border-right-color: #ffffff82;
+}
+.loader.light {
+  border-right-color: #00000082;
 }
 .loader:before,
 .loader:after {

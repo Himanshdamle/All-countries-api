@@ -1,18 +1,22 @@
 let count = 0;
 const list = document.querySelector("#show-country-list");
-const numOfCards = sessionStorage.getItem("numOfCards");
-const getNumOfCountryCards = numOfCards
-  ? numOfCards
-  : ((list.clientWidth - 30) / 320) * (window.innerHeight / 250);
+const getNumOfCountryCards =
+  sessionStorage.getItem("numOfCards") ||
+  ((list.clientWidth - 30) / 320) * (window.innerHeight / 250);
 
-function fetchMorecountryCard() {
-  fetch("https://restcountries.com/v3.1/all")
+let latestApiUsed = "https://restcountries.com/v3.1/all";
+const countryWrapper = document.querySelector("#show-country-list");
+
+let allCountriesData = [];
+
+function fetchMorecountryCard(api) {
+  fetch(api)
     .then((response) => response.json())
     .then((country) => {
+      allCountriesData = country;
       for (let i = 0; i < getNumOfCountryCards; i++) {
         if (count >= country.length) return;
         createCards(country[count]);
-        console.log(i);
         count++;
         sessionStorage.setItem("numOfCards", count);
       }
@@ -22,18 +26,18 @@ function fetchMorecountryCard() {
     });
 }
 
-fetchMorecountryCard();
+fetchMorecountryCard("https://restcountries.com/v3.1/all");
 
 function createCards(country) {
   const countryCardWrapper = document.createElement("div");
   const countryLink = document.createElement("a");
-  countryLink.href = `/country.html?name=${country.name.official}`;
-  countryCardWrapper.append(countryLink);
   countryCardWrapper.classList.add(
     "country-cards",
     "give-border",
     "border-radius"
   );
+  countryLink.href = `/country.html?name=${country.name.official}`;
+  countryCardWrapper.append(countryLink);
 
   countryLink.innerHTML = `
   <img src="${country.flags.svg}" alt="${country.name.common}" />
@@ -57,27 +61,52 @@ function createCards(country) {
   </section>
   `;
 
-  document.querySelector("#show-country-list").append(countryCardWrapper);
+  countryWrapper.append(countryCardWrapper);
 }
 
 window.addEventListener("scroll", (e) => {
   if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-    fetchMorecountryCard();
+    fetchMorecountryCard(latestApiUsed);
   }
   sessionStorage.setItem("scrollPosition", window.scrollY);
 });
-
 window.addEventListener("load", () => {
   const scroll = sessionStorage.getItem("scrollPosition");
   if (scroll) {
     const interval = setInterval(() => {
-      console.log("Checking...", document.body.scrollHeight, scroll);
-
       if (document.body.scrollHeight > scroll) {
         window.scrollTo(0, scroll);
-        console.log("Scrolled to:", scroll);
-        clearInterval(interval); // Stop checking
+        clearInterval(interval);
       }
-    }, 50); // Check every 50ms
+    }, 50);
   }
+});
+
+document.querySelector("#dropdown-region").addEventListener("change", (e) => {
+  console.log(e.target.value);
+  count = 0;
+  countryWrapper.innerHTML = "";
+  latestApiUsed = `https://restcountries.com/v3.1/region/${e.target.value}`;
+  fetchMorecountryCard(latestApiUsed);
+});
+
+document.querySelector("#search-input").addEventListener("input", (e) => {
+  clearTimeout(setTimeout);
+  const timeout = setTimeout(() => {
+    const query = e.target.value.trim();
+    if (query === "") {
+      count = 0;
+      countryWrapper.innerHTML = "";
+      latestApiUsed = "https://restcountries.com/v3.1/all";
+      fetchMorecountryCard(latestApiUsed);
+      return;
+    }
+
+    const filteredCountryList = allCountriesData.filter((country) =>
+      country.name.common.toLowerCase().includes(query.toLowerCase())
+    );
+
+    countryWrapper.innerHTML = "";
+    filteredCountryList.forEach((country) => createCards(country));
+  }, 300);
 });
